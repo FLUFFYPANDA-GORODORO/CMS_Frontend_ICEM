@@ -185,7 +185,7 @@ const News = () => {
                 value={title}
                 onChange={(e) => setTitle(e.target.value)}
                 placeholder="Enter news title"
-                className="w-full bg-transparent border border-white/20 rounded-xl px-3 py-2 text-gray-100 focus:outline-none focus:ring-2 focus:ring-cyan-500/40"
+                className="w-full bg-transparent border border-white/20 rounded-xl px-3 py-2  focus:outline-none focus:ring-2 focus:ring-cyan-500/40"
               />
             </div>
 
@@ -198,7 +198,7 @@ const News = () => {
                 onChange={(e) => setDescription(e.target.value)}
                 placeholder="Enter news description"
                 rows="3"
-                className="w-full bg-transparent border border-white/20 rounded-xl px-3 py-2 text-gray-100 focus:outline-none focus:ring-2 focus:ring-cyan-500/40"
+                className="w-full bg-transparent border border-white/20 rounded-xl px-3 py-2  focus:outline-none focus:ring-2 focus:ring-cyan-500/40"
               ></textarea>
             </div>
 
@@ -209,7 +209,7 @@ const News = () => {
                 value={author}
                 onChange={(e) => setAuthor(e.target.value)}
                 placeholder="Enter author name"
-                className="w-full bg-transparent border border-white/20 rounded-xl px-3 py-2 text-gray-100 focus:outline-none focus:ring-2 focus:ring-cyan-500/40"
+                className="w-full bg-transparent border border-white/20 rounded-xl px-3 py-2  focus:outline-none focus:ring-2 focus:ring-cyan-500/40"
               />
             </div>
 
