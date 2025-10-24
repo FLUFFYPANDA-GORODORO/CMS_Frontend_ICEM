@@ -2,7 +2,7 @@ import React, { useRef, useEffect, useState } from "react";
 import axios from "axios";
 import toast from "react-hot-toast";
 
-const API_URL = "http://localhost:8080/api/banners";
+const API_URL = "https://cms-backend-icem.onrender.com/api/banners";
 
 const HeroSlider = () => {
   const [images, setImages] = useState([]);
@@ -102,7 +102,7 @@ const HeroSlider = () => {
             </div>
           </>
         ) : (
-          <div className="flex items-center justify-center h-[400px] text-gray-400">
+          <div className="flex items-center justify-center h-[400px] text-gray-800">
             No banners available
           </div>
         )}

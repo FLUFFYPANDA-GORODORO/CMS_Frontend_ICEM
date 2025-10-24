@@ -86,8 +86,8 @@ const Banner = () => {
             onClick={() => setActiveTab(tab)}
             className={`px-5 py-2.5 rounded-xl font-medium transition-all ${
               activeTab === tab
-                ? "bg-cyan-500/20 text-cyan-300 border border-cyan-500/30"
-                : "bg-white/10 text-gray-300 hover:bg-white/20"
+                ? "bg-cyan-200/20 text-cyan-400 border border-cyan-500/30"
+                : "bg-black/10 text-gray-600 hover:bg-white/20"
             }`}
           >
             {tab === "upload"
@@ -104,7 +104,7 @@ const Banner = () => {
         {activeTab === "upload" && (
           <form className="space-y-4" onSubmit={handleUpload}>
             <div>
-              <label className="block text-gray-300 text-sm mb-2">
+              <label className="block text-gray-600 text-sm mb-2">
                 Select Image
               </label>
               <div className="relative flex items-center">
@@ -117,11 +117,11 @@ const Banner = () => {
                 />
                 <label
                   htmlFor="banner-upload"
-                  className="px-5 py-2.5 bg-cyan-500/20 hover:bg-cyan-500/30 text-cyan-300 border border-cyan-500/40 rounded-xl cursor-pointer font-medium transition-all"
+                  className="px-5 py-2.5 bg-cyan-200/20 hover:bg-cyan-200/30 text-cyan-400 border border-cyan-500/40 rounded-xl cursor-pointer font-medium transition-all"
                 >
                   Choose File
                 </label>
-                <span className="ml-3 text-gray-400 text-sm truncate max-w-[60%]">
+                <span className="ml-3 text-gray-600 text-sm truncate max-w-[60%]">
                   {file ? file.name : "No file selected"}
                 </span>
               </div>
@@ -129,7 +129,7 @@ const Banner = () => {
 
             {previewUrl && (
               <div className="mt-4">
-                <p className="text-gray-400 text-sm mb-2">Preview:</p>
+                <p className="text-gray-600 text-sm mb-2">Preview:</p>
                 <div className="max-w-full overflow-hidden rounded-xl border border-white/20">
                   <img
                     src={previewUrl}
@@ -143,7 +143,7 @@ const Banner = () => {
             <button
               type="submit"
               disabled={loading}
-              className={`px-5 py-2.5 bg-cyan-500/80 hover:bg-cyan-400 text-white rounded-xl font-medium transition-all ${
+              className={`px-5 py-2.5 bg-cyan-200/80 hover:bg-cyan-400 text-gray-800 rounded-xl font-medium transition-all ${
                 loading && "opacity-50 cursor-not-allowed"
               }`}
             >
@@ -159,15 +159,15 @@ const Banner = () => {
             </h2>
 
             {loading ? (
-              <p className="text-gray-400">Loading banners...</p>
+              <p className="text-gray-600">Loading banners...</p>
             ) : banners.length === 0 ? (
-              <p className="text-gray-400">No banners found.</p>
+              <p className="text-gray-600">No banners found.</p>
             ) : (
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
                 {banners.map((banner) => (
                   <div
                     key={banner.id}
-                    className="bg-white/10 border border-white/20 rounded-xl p-3 shadow-md hover:shadow-lg transition-all"
+                    className="bg-black/10 border border-white/20 rounded-xl p-3 shadow-md hover:shadow-lg transition-all"
                   >
                     <img
                       src={banner.imageUrl}
@@ -175,12 +175,12 @@ const Banner = () => {
                       className="rounded-lg mb-3 w-full h-40 object-cover"
                     />
                     <div className="flex justify-between items-center text-sm">
-                      <p className="text-gray-300 truncate w-3/4">
+                      <p className="text-gray-600 truncate w-3/4">
                         {banner.publicId}
                       </p>
                       <button
                         onClick={() => handleDelete(banner.id)}
-                        className="text-red-400 hover:text-red-300 transition-colors"
+                        className="text-rose-400 hover:text-rose-500 transition-colors"
                       >
                         Delete
                       </button>

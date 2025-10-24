@@ -2,8 +2,9 @@ import axios from "axios";
 
 // Reusable Axios instance with auto JWT + error handling
 const api = axios.create({
-  baseURL: "http://localhost:8080/api",
+  baseURL: "https://cms-backend-icem.onrender.com/api",
 });
+
 
 api.interceptors.request.use(
   (config) => {

@@ -11,7 +11,7 @@ pdfjs.GlobalWorkerOptions.workerSrc = new URL(
   import.meta.url
 ).toString();
 
-const API_URL = "http://localhost:8080/api/news";
+const API_URL = "https://cms-backend-icem.onrender.com/api/news";
 
 const News = () => {
   const [activeTab, setActiveTab] = useState("upload");
@@ -146,15 +146,15 @@ const News = () => {
   };
 
   return (
-    <div className="min-h-screen p-8 text-white">
+    <div className="min-h-screen text-gray-800">
       {/* Tabs */}
       <div className="flex space-x-4 mb-6">
         <button
           onClick={() => setActiveTab("upload")}
           className={`px-5 py-2.5 rounded-xl font-medium transition-all ${
             activeTab === "upload"
-              ? "bg-cyan-500/20 text-cyan-300 border border-cyan-500/30"
-              : "bg-white/10 text-gray-300 hover:bg-white/20"
+              ? "bg-cyan-200/20 text-cyan-600 border border-cyan-500/30"
+              : "bg-black/10 text-gray-600 hover:bg-white/20"
           }`}
         >
           Upload
@@ -164,8 +164,8 @@ const News = () => {
           onClick={() => setActiveTab("view")}
           className={`px-5 py-2.5 rounded-xl font-medium transition-all ${
             activeTab === "view"
-              ? "bg-cyan-500/20 text-cyan-300 border border-cyan-500/30"
-              : "bg-white/10 text-gray-300 hover:bg-white/20"
+              ? "bg-cyan-200/20 text-cyan-600 border border-cyan-500/30"
+              : "bg-black/10 text-gray-600 hover:bg-white/20"
           }`}
         >
           View / Delete
@@ -177,7 +177,7 @@ const News = () => {
         {activeTab === "upload" && (
           <form className="space-y-4" onSubmit={handleUpload}>
             <div>
-              <label className="block text-gray-300 text-sm mb-2">
+              <label className="block text-gray-600 text-sm mb-2">
                 News Title
               </label>
               <input
@@ -190,7 +190,7 @@ const News = () => {
             </div>
 
             <div>
-              <label className="block text-gray-300 text-sm mb-2">
+              <label className="block text-gray-600 text-sm mb-2">
                 Description
               </label>
               <textarea
@@ -203,7 +203,7 @@ const News = () => {
             </div>
 
             <div>
-              <label className="block text-gray-300 text-sm mb-2">Author</label>
+              <label className="block text-gray-600 text-sm mb-2">Author</label>
               <input
                 type="text"
                 value={author}
@@ -214,7 +214,7 @@ const News = () => {
             </div>
 
             <div>
-              <label className="block text-gray-300 text-sm mb-2">
+              <label className="block text-gray-600 text-sm mb-2">
                 Upload PDF (optional)
               </label>
               <div className="relative flex items-center">
@@ -227,11 +227,11 @@ const News = () => {
                 />
                 <label
                   htmlFor="news-pdf-upload"
-                  className="px-5 py-2.5 bg-cyan-500/20 hover:bg-cyan-500/30 text-cyan-300 border border-cyan-500/40 rounded-xl cursor-pointer font-medium transition-all duration-200"
+                  className="px-5 py-2.5 bg-cyan-200/20 hover:bg-cyan-200/30 text-cyan-600 border border-cyan-500/40 rounded-xl cursor-pointer font-medium transition-all duration-200"
                 >
                   Choose PDF
                 </label>
-                <span className="ml-3 text-gray-400 text-sm truncate max-w-[60%]">
+                <span className="ml-3 text-gray-600 text-sm truncate max-w-[60%]">
                   {pdfFile ? pdfFile.name : "No file selected"}
                 </span>
               </div>
@@ -240,7 +240,7 @@ const News = () => {
             <button
               type="submit"
               disabled={loading}
-              className={`px-5 py-2.5 bg-cyan-500/80 hover:bg-cyan-400 text-white rounded-xl transition-all font-medium ${
+              className={`px-5 py-2.5 bg-cyan-200/80 hover:bg-cyan-400 text-gray-800 rounded-xl transition-all font-medium ${
                 loading && "opacity-50 cursor-not-allowed"
               }`}
             >
@@ -252,14 +252,14 @@ const News = () => {
         {/* View/Delete Tab */}
         {activeTab === "view" && (
           <div>
-            <h2 className="text-2xl font-semibold text-cyan-400 mb-4">
+            <h2 className="text-2xl font-semibold text-cyan-600 mb-4">
               View & Delete News 🗞
             </h2>
 
             {loading ? (
-              <p className="text-gray-400">Loading news...</p>
+              <p className="text-gray-600">Loading news...</p>
             ) : newsList.length === 0 ? (
-              <p className="text-gray-400">No news available.</p>
+              <p className="text-gray-600">No news available.</p>
             ) : (
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
                 {newsList.map((news) => (
@@ -267,16 +267,16 @@ const News = () => {
                     key={news.id}
                     className="bg-white/10 border border-white/20 rounded-xl p-4 shadow-md hover:shadow-lg transition-all"
                   >
-                    <h3 className="text-lg font-semibold text-cyan-300 mb-1">
+                    <h3 className="text-lg font-semibold text-cyan-600 mb-1">
                       {news.title}
                     </h3>
-                    <p className="text-gray-300 text-sm mb-2">
+                    <p className="text-gray-600 text-sm mb-2">
                       {news.description}
                     </p>
-                    <p className="text-gray-400 text-xs mb-2">
+                    <p className="text-gray-600 text-xs mb-2">
                       Author: {news.author}
                     </p>
-                    <p className="text-gray-400 text-xs mb-3">
+                    <p className="text-gray-600 text-xs mb-3">
                       Date: {news.date}
                     </p>
 
@@ -286,7 +286,7 @@ const News = () => {
                           onClick={() =>
                             handleDownloadPdf(news.pdfUrl, news.title)
                           }
-                          className="text-cyan-400 text-sm hover:underline"
+                          className="text-cyan-600 text-sm hover:underline"
                         >
                           ⬇ Download PDF
                         </button>
@@ -295,7 +295,7 @@ const News = () => {
                           onClick={() =>
                             handleViewPdf(news.pdfUrl, news.title)
                           }
-                          className="text-green-400 text-sm hover:underline"
+                          className="text-emerald-400 text-sm hover:underline"
                         >
                           👁 View PDF
                         </button>
@@ -307,12 +307,12 @@ const News = () => {
                     )}
 
                     <div className="mt-3 flex justify-between items-center text-sm">
-                      <p className="text-gray-400 truncate w-3/4">
+                      <p className="text-gray-600 truncate w-3/4">
                         {news.publicId}
                       </p>
                       <button
                         onClick={() => handleDelete(news.id)}
-                        className="text-red-400 hover:text-red-300 transition-colors"
+                        className="text-rose-400 hover:text-rose-300 transition-colors"
                       >
                         Delete
                       </button>
@@ -330,12 +330,12 @@ const News = () => {
         <div className="fixed inset-0 z-50 bg-black/70 backdrop-blur-md flex justify-center items-center">
           <div className="bg-[#0d1117] border border-cyan-500/40 rounded-2xl w-11/12 lg:w-3/4 xl:w-2/3 h-[90vh] shadow-2xl shadow-cyan-500/10 flex flex-col overflow-hidden">
             <div className="flex justify-between items-center px-5 py-3 border-b border-cyan-500/30 bg-black/40">
-              <h2 className="text-cyan-300 font-semibold text-lg tracking-wide">
+              <h2 className="text-cyan-600 font-semibold text-lg tracking-wide">
                 {selectedTitle || "View PDF"}
               </h2>
               <button
                 onClick={() => setShowModal(false)}
-                className="text-gray-400 hover:text-red-400 text-2xl font-bold transition-all"
+                className="text-gray-600 hover:text-rose-400 text-2xl font-bold transition-all"
               >
                 ✕
               </button>
@@ -348,7 +348,7 @@ const News = () => {
                 onLoadError={(error) =>
                   toast.error("Failed to load PDF: " + error.message)
                 }
-                loading={<p className="text-cyan-300">Loading PDF...</p>}
+                loading={<p className="text-cyan-600">Loading PDF...</p>}
               >
                 {Array.from(new Array(numPages), (el, index) => (
                   <div key={`page_${index + 1}`} className="mb-4 flex justify-center">

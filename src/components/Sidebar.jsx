@@ -15,7 +15,7 @@ const Sidebar = () => {
     <div className="relative">
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className="md:hidden fixed top-5 left-5 z-50 text-white"
+        className="md:hidden fixed top-5 left-5 z-50 text-gray-800"
       >
         {isOpen ? <X size={26} /> : <Menu size={26} />}
       </button>
@@ -26,7 +26,7 @@ const Sidebar = () => {
         } md:translate-x-0 z-40`}
       >
         <div className="flex items-center justify-center h-20 border-b border-white/20">
-          <h1 className="text-2xl font-bold text-cyan-400">ICEM CMS</h1>
+          <h1 className="text-2xl font-bold text-cyan-600">ICEM CMS</h1>
         </div>
 
         <ul className="flex flex-col mt-6 space-y-2 px-4">
@@ -36,8 +36,8 @@ const Sidebar = () => {
                 to={item.path}
                 className={`flex items-center gap-3 px-4 py-3 rounded-xl cursor-pointer transition-all ${
                   location.pathname === item.path
-                    ? "bg-cyan-500/20 text-cyan-300 border border-cyan-500/30"
-                    : "text-gray-100 hover:bg-white/10 hover:text-cyan-300"
+                    ? "bg-cyan-500/20 text-cyan-400 border border-cyan-500/30"
+                    : "text-gray-600 hover:bg-white/10 hover:text-cyan-400"
                 }`}
               >
                 {item.icon}

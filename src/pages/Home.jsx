@@ -5,7 +5,7 @@ import Navbar from "../components/Navbar";
 
 const Home = () => {
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-black text-white flex">
+    <div className="min-h-screen bg-zinc-50 text-gray-800 flex">
       {/* Sidebar */}
       <Sidebar />
 
