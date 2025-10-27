@@ -5,8 +5,11 @@ import api from "../utils/axiosInstance";
 
 const Banner = () => {
   const [activeTab, setActiveTab] = useState("upload");
-  const [file, setFile] = useState(null);
-  const [previewUrl, setPreviewUrl] = useState(null);
+  const [desktopFile, setDesktopFile] = useState(null);
+  const [mobileFile, setMobileFile] = useState(null);
+  const [previewDesktop, setPreviewDesktop] = useState(null);
+  const [previewMobile, setPreviewMobile] = useState(null);
+  const [bannerType, setBannerType] = useState("homepage");
   const [banners, setBanners] = useState([]);
   const [loading, setLoading] = useState(false);
 
@@ -28,13 +31,16 @@ const Banner = () => {
     if (activeTab === "view") fetchBanners();
   }, [activeTab]);
 
-  // ✅ Upload Banner
+  // ✅ Upload Banner (desktop + mobile)
   const handleUpload = async (e) => {
     e.preventDefault();
-    if (!file) return toast.error("Please select an image!");
+    if (!desktopFile || !mobileFile)
+      return toast.error("Please select both desktop and mobile images!");
 
     const formData = new FormData();
-    formData.append("image", file);
+    formData.append("desktopImage", desktopFile);
+    formData.append("mobileImage", mobileFile);
+    formData.append("type", bannerType);
 
     try {
       setLoading(true);
@@ -42,8 +48,11 @@ const Banner = () => {
         headers: { "Content-Type": "multipart/form-data" },
       });
       toast.success("Banner uploaded successfully!");
-      setFile(null);
-      setPreviewUrl(null);
+      setDesktopFile(null);
+      setMobileFile(null);
+      setPreviewDesktop(null);
+      setPreviewMobile(null);
+      fetchBanners(); // auto-refresh after upload
     } catch (error) {
       console.error(error);
       toast.error("Upload failed!");
@@ -64,30 +73,44 @@ const Banner = () => {
     }
   };
 
-  // Handle file selection + preview
-  const handleFileChange = (e) => {
-    const selectedFile = e.target.files[0];
-    setFile(selectedFile);
-    if (selectedFile) {
-      const objectUrl = URL.createObjectURL(selectedFile);
-      setPreviewUrl(objectUrl);
-    } else {
-      setPreviewUrl(null);
-    }
+  // Handle file selections
+  const handleDesktopChange = (e) => {
+    const file = e.target.files[0];
+    setDesktopFile(file);
+    setPreviewDesktop(file ? URL.createObjectURL(file) : null);
   };
 
+  const handleMobileChange = (e) => {
+    const file = e.target.files[0];
+    setMobileFile(file);
+    setPreviewMobile(file ? URL.createObjectURL(file) : null);
+  };
+
+  // Segregate banners by version
+  const desktopBanners = banners.map((b) => ({
+    id: b.id,
+    img: b.desktopImageUrl,
+    type: b.type,
+  }));
+
+  const mobileBanners = banners.map((b) => ({
+    id: b.id,
+    img: b.mobileImageUrl,
+    type: b.type,
+  }));
+
   return (
-    <div>
+    <div className="max-w-7xl mx-auto mt-6 bg-white rounded-2xl shadow-md p-8">
       {/* Tabs */}
-      <div className="flex space-x-4 mb-6">
+      <div className="flex  space-x-4 mb-6">
         {["upload", "view", "slideshow"].map((tab) => (
           <button
             key={tab}
             onClick={() => setActiveTab(tab)}
-            className={`px-5 py-2.5 rounded-xl font-medium transition-all ${
+            className={`px-5 py-2.5 rounded-lg font-medium transition-all ${
               activeTab === tab
-                ? "bg-cyan-200/20 text-cyan-400 border border-cyan-500/30"
-                : "bg-black/10 text-gray-600 hover:bg-white/20"
+                ? "bg-cyan-100 text-cyan-700 shadow-md"
+                : "bg-gray-100 text-gray-500 hover:bg-gray-200"
             }`}
           >
             {tab === "upload"
@@ -99,105 +122,194 @@ const Banner = () => {
         ))}
       </div>
 
-      {/* Content */}
-      <div className="backdrop-blur-lg bg-white/10 border border-white/20 rounded-2xl shadow-lg p-6">
-        {activeTab === "upload" && (
-          <form className="space-y-4" onSubmit={handleUpload}>
-            <div>
-              <label className="block text-gray-600 text-sm mb-2">
-                Select Image
+      {/* Upload Section */}
+      {activeTab === "upload" && (
+        <form className="space-y-6" onSubmit={handleUpload}>
+          {/* Banner Type */}
+          <div>
+            <label className="block text-gray-700 text-sm mb-2 font-medium">
+              Banner Type
+            </label>
+            <select
+              value={bannerType}
+              onChange={(e) => setBannerType(e.target.value)}
+              className="px-4 py-2 border border-gray-300 bg-white text-gray-700 rounded-lg focus:ring-2 focus:ring-cyan-300 focus:outline-none transition-all"
+            >
+              <option value="homepage">Homepage</option>
+              <option value="placement">Placement</option>
+            </select>
+          </div>
+
+          {/* Desktop Upload */}
+          <div>
+            <label className="block text-gray-700 text-sm mb-2 font-medium">
+              Desktop Image
+            </label>
+            <div className="flex items-center gap-3">
+              <label
+                htmlFor="desktop-upload"
+                className="px-5 py-2 bg-cyan-100 text-gray-800 font-medium rounded-md cursor-pointer hover:bg-cyan-200 transition-all shadow-sm"
+              >
+                Choose File
               </label>
-              <div className="relative flex items-center">
-                <input
-                  id="banner-upload"
-                  type="file"
-                  accept="image/*"
-                  onChange={handleFileChange}
-                  className="hidden"
-                />
-                <label
-                  htmlFor="banner-upload"
-                  className="px-5 py-2.5 bg-cyan-200/20 hover:bg-cyan-200/30 text-cyan-400 border border-cyan-500/40 rounded-xl cursor-pointer font-medium transition-all"
-                >
-                  Choose File
-                </label>
-                <span className="ml-3 text-gray-600 text-sm truncate max-w-[60%]">
-                  {file ? file.name : "No file selected"}
-                </span>
-              </div>
+              <input
+                id="desktop-upload"
+                type="file"
+                accept="image/*"
+                onChange={handleDesktopChange}
+                className="hidden"
+              />
+              <span className="text-gray-600 text-sm truncate max-w-[200px]">
+                {desktopFile ? desktopFile.name : "No file selected"}
+              </span>
             </div>
 
-            {previewUrl && (
-              <div className="mt-4">
-                <p className="text-gray-600 text-sm mb-2">Preview:</p>
-                <div className="max-w-full overflow-hidden rounded-xl border border-white/20">
-                  <img
-                    src={previewUrl}
-                    alt="Preview"
-                    className="w-full h-auto object-contain rounded-xl"
-                  />
+            {previewDesktop && (
+              <div className="mt-3 rounded-lg overflow-hidden border border-gray-200">
+                <img
+                  src={previewDesktop}
+                  alt="Desktop Preview"
+                  className="w-full h-48 object-cover"
+                />
+              </div>
+            )}
+          </div>
+
+          {/* Mobile Upload */}
+          <div>
+            <label className="block text-gray-700 text-sm mb-2 font-medium">
+              Mobile Image
+            </label>
+            <div className="flex items-center gap-3">
+              <label
+                htmlFor="mobile-upload"
+                className="px-5 py-2 bg-cyan-100 text-gray-800 font-medium rounded-md cursor-pointer hover:bg-cyan-200 transition-all shadow-sm"
+              >
+                Choose File
+              </label>
+              <input
+                id="mobile-upload"
+                type="file"
+                accept="image/*"
+                onChange={handleMobileChange}
+                className="hidden"
+              />
+              <span className="text-gray-600 text-sm truncate max-w-[200px]">
+                {mobileFile ? mobileFile.name : "No file selected"}
+              </span>
+            </div>
+
+            {previewMobile && (
+              <div className="mt-3 rounded-lg overflow-hidden border border-gray-200">
+                <img
+                  src={previewMobile}
+                  alt="Mobile Preview"
+                  className="w-full h-48 object-cover"
+                />
+              </div>
+            )}
+          </div>
+
+          {/* Upload Button */}
+          <button
+            type="submit"
+            disabled={loading}
+            className={`px-6 py-2 bg-cyan-200 hover:bg-cyan-300 text-gray-900 font-semibold rounded-md shadow-md transition-all ${
+              loading && "opacity-60 cursor-not-allowed"
+            }`}
+          >
+            {loading ? "Uploading..." : "Upload Banner"}
+          </button>
+        </form>
+      )}
+
+      {/* View Section */}
+      {activeTab === "view" && (
+        <div>
+          <h2 className="text-2xl font-semibold text-cyan-600 mb-4">
+            View Banners 🖼️
+          </h2>
+
+          {loading ? (
+            <p className="text-gray-600">Loading banners...</p>
+          ) : banners.length === 0 ? (
+            <p className="text-gray-600">No banners found.</p>
+          ) : (
+            <>
+              {/* Desktop */}
+              <div className="mb-8">
+                <h3 className="text-lg text-cyan-500 mb-3">🖥 Desktop Banners</h3>
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
+                  {desktopBanners.map((banner) => (
+                    <div
+                      key={banner.id}
+                      className="bg-gray-50 border border-gray-200 rounded-xl p-3 shadow-sm hover:shadow-md transition-all"
+                    >
+                      <img
+                        src={banner.img}
+                        alt="Desktop Banner"
+                        className="rounded-lg mb-3 w-full h-40 object-cover"
+                      />
+                      <div className="flex justify-between text-sm">
+                        <span className="text-gray-500">{banner.type}</span>
+                        <button
+                          onClick={() => handleDelete(banner.id)}
+                          className="text-rose-400 hover:text-rose-500"
+                        >
+                          Delete
+                        </button>
+                      </div>
+                    </div>
+                  ))}
                 </div>
               </div>
-            )}
 
-            <button
-              type="submit"
-              disabled={loading}
-              className={`px-5 py-2.5 bg-cyan-200/80 hover:bg-cyan-400 text-gray-800 rounded-xl font-medium transition-all ${
-                loading && "opacity-50 cursor-not-allowed"
-              }`}
-            >
-              {loading ? "Uploading..." : "Upload Banner"}
-            </button>
-          </form>
-        )}
-
-        {activeTab === "view" && (
-          <div>
-            <h2 className="text-2xl font-semibold text-cyan-400 mb-4">
-              View & Delete Banners 🗑
-            </h2>
-
-            {loading ? (
-              <p className="text-gray-600">Loading banners...</p>
-            ) : banners.length === 0 ? (
-              <p className="text-gray-600">No banners found.</p>
-            ) : (
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
-                {banners.map((banner) => (
-                  <div
-                    key={banner.id}
-                    className="bg-black/10 border border-white/20 rounded-xl p-3 shadow-md hover:shadow-lg transition-all"
-                  >
-                    <img
-                      src={banner.imageUrl}
-                      alt="Banner"
-                      className="rounded-lg mb-3 w-full h-40 object-cover"
-                    />
-                    <div className="flex justify-between items-center text-sm">
-                      <p className="text-gray-600 truncate w-3/4">
-                        {banner.publicId}
-                      </p>
-                      <button
-                        onClick={() => handleDelete(banner.id)}
-                        className="text-rose-400 hover:text-rose-500 transition-colors"
-                      >
-                        Delete
-                      </button>
+              {/* Mobile */}
+              <div>
+                <h3 className="text-lg text-cyan-500 mb-3">📱 Mobile Banners</h3>
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
+                  {mobileBanners.map((banner) => (
+                    <div
+                      key={banner.id}
+                      className="bg-gray-50 border border-gray-200 rounded-xl p-3 shadow-sm hover:shadow-md transition-all"
+                    >
+                      <img
+                        src={banner.img}
+                        alt="Mobile Banner"
+                        className="rounded-lg mb-3 w-full h-40 object-cover"
+                      />
+                      <div className="flex justify-between text-sm">
+                        <span className="text-gray-500">{banner.type}</span>
+                        <button
+                          onClick={() => handleDelete(banner.id)}
+                          className="text-rose-400 hover:text-rose-500"
+                        >
+                          Delete
+                        </button>
+                      </div>
                     </div>
-                  </div>
-                ))}
+                  ))}
+                </div>
               </div>
-            )}
-          </div>
-        )}
+            </>
+          )}
+        </div>
+      )}
 
-        {activeTab === "slideshow" && (
-          <div className="rounded-xl overflow-hidden border border-white/20">
-            <HeroSlider />
+      {/* Slideshow Section */}
+      {activeTab === "slideshow" && (
+        <div className="space-y-10">
+          <div>
+            <h3 className="text-lg text-cyan-500 mb-3">🖥 Desktop Slider</h3>
+            <HeroSlider version="desktop" />
           </div>
-        )}
-      </div>
+
+          <div>
+            <h3 className="text-lg text-cyan-500 mb-3">📱 Mobile Slider</h3>
+            <HeroSlider version="mobile" />
+          </div>
+        </div>
+      )}
     </div>
   );
 };

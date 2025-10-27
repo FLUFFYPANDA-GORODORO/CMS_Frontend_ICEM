@@ -1,55 +1,42 @@
-import React, { useRef, useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import axios from "axios";
 import toast from "react-hot-toast";
 
 const API_URL = "https://cms-backend-icem.onrender.com/api/banners";
 
-const HeroSlider = () => {
+const HeroSlider = ({ version }) => {
   const [images, setImages] = useState([]);
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isTransitioning, setIsTransitioning] = useState(true);
   const sliderRef = useRef(null);
 
-  // ✅ Fetch images from backend (with JWT token)
+  // ✅ Fetch banners
   useEffect(() => {
-    const fetchImages = async () => {
+    const fetchBanners = async () => {
       try {
-        const token = localStorage.getItem("token"); // ✅ Get token
-        const res = await axios.get(API_URL, {
-          headers: {
-            Authorization: `Bearer ${token}`, // ✅ Attach token
-          },
-        });
-
+        const res = await axios.get(API_URL);
         if (res.data && res.data.length > 0) {
-          setImages(res.data.map((b) => b.imageUrl));
+          const imgs =
+            version === "mobile"
+              ? res.data.map((b) => b.mobileImageUrl)
+              : res.data.map((b) => b.desktopImageUrl);
+          setImages(imgs.filter(Boolean));
         } else {
-          toast("No banners found, showing fallback images");
-          setImages([]);
+          toast("No banners found");
         }
       } catch (error) {
         console.error(error);
-        if (error.response?.status === 403) {
-          toast.error("Access forbidden — please log in again.");
-        } else if (error.response?.status === 401) {
-          toast.error("Unauthorized! Please log in again.");
-          localStorage.removeItem("token");
-          window.location.href = "/";
-        } else {
-          toast.error("Failed to load banners from server");
-        }
+        toast.error("Failed to load banners");
       }
     };
 
-    fetchImages();
-  }, []);
+    fetchBanners();
+  }, [version]);
 
-  // Auto slide
+  // ✅ Auto slide
   useEffect(() => {
     if (images.length === 0) return;
-    const interval = setInterval(() => {
-      handleNext();
-    }, 4000);
+    const interval = setInterval(() => handleNext(), 4000);
     return () => clearInterval(interval);
   }, [currentIndex, images]);
 
@@ -69,41 +56,35 @@ const HeroSlider = () => {
     }
   };
 
-  const handleDotClick = (index) => {
-    setIsTransitioning(true);
-    setCurrentIndex(index);
-  };
-
   return (
     <div className="w-full flex flex-col items-center">
-      {/* Slider container */}
       <div className="relative w-full overflow-hidden bg-black rounded-xl">
         {images.length > 0 ? (
-          <>
-            <div
-              ref={sliderRef}
-              className={`flex ${
-                isTransitioning
-                  ? "transition-transform duration-700 ease-in-out"
-                  : ""
-              }`}
-              style={{
-                transform: `translateX(-${currentIndex * 100}%)`,
-              }}
-            >
-              {[...images, images[0]].map((img, i) => (
-                <img
-                  key={i}
-                  src={img}
-                  alt={`Slide ${i + 1}`}
-                  className="w-full h-[400px] object-cover flex-shrink-0"
-                />
-              ))}
-            </div>
-          </>
+          <div
+            ref={sliderRef}
+            className={`flex ${
+              isTransitioning
+                ? "transition-transform duration-700 ease-in-out"
+                : ""
+            }`}
+            style={{
+              transform: `translateX(-${currentIndex * 100}%)`,
+            }}
+          >
+            {[...images, images[0]].map((img, i) => (
+              <img
+                key={i}
+                src={img}
+                alt={`Slide ${i + 1}`}
+                className={`w-full ${
+                  version === "mobile" ? "h-[300px]" : "h-[500px]"
+                } object-cover flex-shrink-0`}
+              />
+            ))}
+          </div>
         ) : (
           <div className="flex items-center justify-center h-[400px] text-gray-800">
-            No banners available
+            No {version} banners available
           </div>
         )}
       </div>
