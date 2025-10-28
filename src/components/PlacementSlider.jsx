@@ -2,9 +2,9 @@ import React, { useRef, useEffect, useState } from "react";
 import axios from "axios";
 import toast from "react-hot-toast";
 
-const API_URL = "https://cms-backend-icem.onrender.com/api/banners/type/homepage";
+const API_URL = "https://cms-backend-icem.onrender.com/api/banners/type/placement";
 
-const HeroSlider = () => {
+const PlacementSlider = () => {
   const [desktopImages, setDesktopImages] = useState([]);
   const [mobileImages, setMobileImages] = useState([]);
   const [currentIndex, setCurrentIndex] = useState(0);
@@ -20,11 +20,11 @@ const HeroSlider = () => {
           setDesktopImages(res.data.map((b) => b.desktopImageUrl).filter(Boolean));
           setMobileImages(res.data.map((b) => b.mobileImageUrl).filter(Boolean));
         } else {
-          toast("No homepage banners found");
+          toast("No placement banners found");
         }
       } catch (error) {
         console.error(error);
-        toast.error("Failed to load homepage banners");
+        toast.error("Failed to load placement banners");
       } finally {
         setLoading(false);
       }
@@ -59,11 +59,11 @@ const HeroSlider = () => {
     <div className="relative w-full overflow-hidden rounded-lg">
       {loading && (
         <div className="absolute inset-0 flex items-center justify-center bg-black/50 z-10">
-          <div className="w-10 h-10 border-4 border-cyan-300 border-t-transparent rounded-full animate-spin"></div>
+          <div className="w-10 h-10 border-4 border-blue-400 border-t-transparent rounded-full animate-spin"></div>
         </div>
       )}
 
-      {/* Desktop View */}
+      {/* Desktop */}
       <div className="hidden md:block">
         {desktopImages.length > 0 ? (
           <div
@@ -77,7 +77,7 @@ const HeroSlider = () => {
               <img
                 key={i}
                 src={img}
-                alt={`Desktop Slide ${i + 1}`}
+                alt={`Desktop Placement ${i + 1}`}
                 className="w-full h-[500px] object-cover flex-shrink-0"
                 loading="lazy"
               />
@@ -88,7 +88,7 @@ const HeroSlider = () => {
         )}
       </div>
 
-      {/* Mobile View */}
+      {/* Mobile */}
       <div className="block md:hidden">
         {mobileImages.length > 0 ? (
           <div
@@ -102,7 +102,7 @@ const HeroSlider = () => {
               <img
                 key={i}
                 src={img}
-                alt={`Mobile Slide ${i + 1}`}
+                alt={`Mobile Placement ${i + 1}`}
                 className="w-full h-[300px] object-cover flex-shrink-0"
                 loading="lazy"
               />
@@ -116,4 +116,4 @@ const HeroSlider = () => {
   );
 };
 
-export default HeroSlider;
+export default PlacementSlider;

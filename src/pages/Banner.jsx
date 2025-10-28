@@ -1,15 +1,16 @@
 import React, { useState, useEffect } from "react";
 import toast from "react-hot-toast";
 import HeroSlider from "../components/HeroSlider";
+import PlacementSlider from "../components/PlacementSlider";
 import api from "../utils/axiosInstance";
 
 const Banner = () => {
+  const [bannerType, setBannerType] = useState("homepage");
   const [activeTab, setActiveTab] = useState("upload");
   const [desktopFile, setDesktopFile] = useState(null);
   const [mobileFile, setMobileFile] = useState(null);
   const [previewDesktop, setPreviewDesktop] = useState(null);
   const [previewMobile, setPreviewMobile] = useState(null);
-  const [bannerType, setBannerType] = useState("homepage");
   const [banners, setBanners] = useState([]);
   const [loading, setLoading] = useState(false);
 
@@ -17,7 +18,7 @@ const Banner = () => {
   const fetchBanners = async () => {
     try {
       setLoading(true);
-      const res = await api.get("/banners");
+      const res = await api.get(`/banners/type/${bannerType}`);
       setBanners(res.data);
     } catch (error) {
       console.error(error);
@@ -28,8 +29,8 @@ const Banner = () => {
   };
 
   useEffect(() => {
-    if (activeTab === "view") fetchBanners();
-  }, [activeTab]);
+    if (activeTab === "view" || activeTab === "slideshow") fetchBanners();
+  }, [activeTab, bannerType]);
 
   // ✅ Upload Banner (desktop + mobile)
   const handleUpload = async (e) => {
@@ -52,7 +53,7 @@ const Banner = () => {
       setMobileFile(null);
       setPreviewDesktop(null);
       setPreviewMobile(null);
-      fetchBanners(); // auto-refresh after upload
+      fetchBanners();
     } catch (error) {
       console.error(error);
       toast.error("Upload failed!");
@@ -73,7 +74,7 @@ const Banner = () => {
     }
   };
 
-  // Handle file selections
+  // ✅ File Handlers
   const handleDesktopChange = (e) => {
     const file = e.target.files[0];
     setDesktopFile(file);
@@ -86,23 +87,27 @@ const Banner = () => {
     setPreviewMobile(file ? URL.createObjectURL(file) : null);
   };
 
-  // Segregate banners by version
-  const desktopBanners = banners.map((b) => ({
-    id: b.id,
-    img: b.desktopImageUrl,
-    type: b.type,
-  }));
-
-  const mobileBanners = banners.map((b) => ({
-    id: b.id,
-    img: b.mobileImageUrl,
-    type: b.type,
-  }));
-
   return (
-    <div className="max-w-7xl mx-auto mt-6 bg-white rounded-2xl shadow-md p-8">
-      {/* Tabs */}
-      <div className="flex  space-x-4 mb-6">
+    <div className="max-w-7xl mx-auto  bg-white rounded-2xl shadow-md p-8">
+      {/* 🔹 Top Tabs — Homepage / Placement */}
+      <div className="flex border-b mb-8">
+        {["homepage", "placement"].map((type) => (
+          <button
+            key={type}
+            onClick={() => setBannerType(type)}
+            className={`px-8 py-3 font-medium text-sm transition-all ${
+              bannerType === type
+                ? "text-blue-600 border-b-4 border-blue-600 bg-blue-50"
+                : "text-gray-500 hover:text-blue-600"
+            }`}
+          >
+            {type === "homepage" ? "Homepage Banners" : "Placement Banners"}
+          </button>
+        ))}
+      </div>
+
+      {/* 🔹 Secondary Tabs — Upload / View / Slideshow */}
+      <div className="flex space-x-4 mb-6">
         {["upload", "view", "slideshow"].map((tab) => (
           <button
             key={tab}
@@ -122,23 +127,12 @@ const Banner = () => {
         ))}
       </div>
 
-      {/* Upload Section */}
+      {/* 🔹 Upload Section */}
       {activeTab === "upload" && (
         <form className="space-y-6" onSubmit={handleUpload}>
-          {/* Banner Type */}
-          <div>
-            <label className="block text-gray-700 text-sm mb-2 font-medium">
-              Banner Type
-            </label>
-            <select
-              value={bannerType}
-              onChange={(e) => setBannerType(e.target.value)}
-              className="px-4 py-2 border border-gray-300 bg-white text-gray-700 rounded-lg focus:ring-2 focus:ring-cyan-300 focus:outline-none transition-all"
-            >
-              <option value="homepage">Homepage</option>
-              <option value="placement">Placement</option>
-            </select>
-          </div>
+          <h3 className="text-lg font-semibold text-blue-600 mb-4">
+            Upload {bannerType === "homepage" ? "Homepage" : "Placement"} Banners
+          </h3>
 
           {/* Desktop Upload */}
           <div>
@@ -210,7 +204,6 @@ const Banner = () => {
             )}
           </div>
 
-          {/* Upload Button */}
           <button
             type="submit"
             disabled={loading}
@@ -223,11 +216,14 @@ const Banner = () => {
         </form>
       )}
 
-      {/* View Section */}
+      {/* 🔹 View Section */}
       {activeTab === "view" && (
         <div>
           <h2 className="text-2xl font-semibold text-cyan-600 mb-4">
-            View Banners 🖼️
+            {bannerType === "homepage"
+              ? "Homepage Banners"
+              : "Placement Banners"}{" "}
+            🖼️
           </h2>
 
           {loading ? (
@@ -236,24 +232,23 @@ const Banner = () => {
             <p className="text-gray-600">No banners found.</p>
           ) : (
             <>
-              {/* Desktop */}
               <div className="mb-8">
-                <h3 className="text-lg text-cyan-500 mb-3">🖥 Desktop Banners</h3>
+                <h3 className="text-lg text-cyan-500 mb-3">🖥 Desktop</h3>
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
-                  {desktopBanners.map((banner) => (
+                  {banners.map((b) => (
                     <div
-                      key={banner.id}
+                      key={b.id}
                       className="bg-gray-50 border border-gray-200 rounded-xl p-3 shadow-sm hover:shadow-md transition-all"
                     >
                       <img
-                        src={banner.img}
+                        src={b.desktopImageUrl}
                         alt="Desktop Banner"
                         className="rounded-lg mb-3 w-full h-40 object-cover"
                       />
                       <div className="flex justify-between text-sm">
-                        <span className="text-gray-500">{banner.type}</span>
+                        <span className="text-gray-500">{b.type}</span>
                         <button
-                          onClick={() => handleDelete(banner.id)}
+                          onClick={() => handleDelete(b.id)}
                           className="text-rose-400 hover:text-rose-500"
                         >
                           Delete
@@ -264,24 +259,23 @@ const Banner = () => {
                 </div>
               </div>
 
-              {/* Mobile */}
               <div>
-                <h3 className="text-lg text-cyan-500 mb-3">📱 Mobile Banners</h3>
+                <h3 className="text-lg text-cyan-500 mb-3">📱 Mobile</h3>
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
-                  {mobileBanners.map((banner) => (
+                  {banners.map((b) => (
                     <div
-                      key={banner.id}
+                      key={b.id + "-mobile"}
                       className="bg-gray-50 border border-gray-200 rounded-xl p-3 shadow-sm hover:shadow-md transition-all"
                     >
                       <img
-                        src={banner.img}
+                        src={b.mobileImageUrl}
                         alt="Mobile Banner"
                         className="rounded-lg mb-3 w-full h-40 object-cover"
                       />
                       <div className="flex justify-between text-sm">
-                        <span className="text-gray-500">{banner.type}</span>
+                        <span className="text-gray-500">{b.type}</span>
                         <button
-                          onClick={() => handleDelete(banner.id)}
+                          onClick={() => handleDelete(b.id)}
                           className="text-rose-400 hover:text-rose-500"
                         >
                           Delete
@@ -296,18 +290,16 @@ const Banner = () => {
         </div>
       )}
 
-      {/* Slideshow Section */}
+      {/* 🔹 Slideshow Section */}
       {activeTab === "slideshow" && (
         <div className="space-y-10">
-          <div>
-            <h3 className="text-lg text-cyan-500 mb-3">🖥 Desktop Slider</h3>
-            <HeroSlider version="desktop" />
-          </div>
+          <h3 className="text-2xl font-semibold text-blue-600 mb-3">
+            {bannerType === "homepage"
+              ? "Homepage Banner Preview"
+              : "Placement Banner Preview"}
+          </h3>
 
-          <div>
-            <h3 className="text-lg text-cyan-500 mb-3">📱 Mobile Slider</h3>
-            <HeroSlider version="mobile" />
-          </div>
+          {bannerType === "homepage" ? <HeroSlider /> : <PlacementSlider />}
         </div>
       )}
     </div>

@@ -13,7 +13,6 @@ const Home = () => {
       <div className="flex-1 ml-0 md:ml-64 transition-all duration-300">
         <Navbar />
         <div className="p-8 mt-24">
-          {/* This is where child routes render */}
           <Outlet />
         </div>
       </div>

@@ -1,10 +1,9 @@
 import axios from "axios";
 
-// Reusable Axios instance with auto JWT + error handling
+// ✅ Axios instance with JWT injection and auto logout
 const api = axios.create({
   baseURL: "https://cms-backend-icem.onrender.com/api",
 });
-
 
 api.interceptors.request.use(
   (config) => {
@@ -20,7 +19,7 @@ api.interceptors.response.use(
   (error) => {
     if (error.response?.status === 401) {
       localStorage.removeItem("token");
-      window.location.href = "/"; // redirect to login
+      window.location.href = "/"; // Redirect to login
     }
     return Promise.reject(error);
   }
