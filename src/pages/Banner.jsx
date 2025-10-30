@@ -88,17 +88,17 @@ const Banner = () => {
   };
 
   return (
-    <div className="max-w-7xl mx-auto  bg-white rounded-2xl shadow-md p-8">
+    <div className="bg-white rounded-2xl shadow-md p-8">
       {/* 🔹 Top Tabs — Homepage / Placement */}
       <div className="flex border-b mb-8">
         {["homepage", "placement"].map((type) => (
           <button
             key={type}
             onClick={() => setBannerType(type)}
-            className={`px-8 py-3 font-medium text-sm transition-all ${
+            className={`px-8 py-3 w-full font-semibold text-sm transition-all  ${
               bannerType === type
-                ? "text-blue-600 border-b-4 border-blue-600 bg-blue-50"
-                : "text-gray-500 hover:text-blue-600"
+                ? "bg-cyan-100 text-cyan-700 shadow-md border-b-4 border-cyan-500"
+                : "bg-gray-100 text-gray-500 hover:bg-cyan-50 hover:text-cyan-600"
             }`}
           >
             {type === "homepage" ? "Homepage Banners" : "Placement Banners"}
@@ -115,7 +115,7 @@ const Banner = () => {
             className={`px-5 py-2.5 rounded-lg font-medium transition-all ${
               activeTab === tab
                 ? "bg-cyan-100 text-cyan-700 shadow-md"
-                : "bg-gray-100 text-gray-500 hover:bg-gray-200"
+                : "bg-gray-100 text-gray-500 hover:bg-cyan-50 hover:text-cyan-600"
             }`}
           >
             {tab === "upload"
@@ -130,8 +130,8 @@ const Banner = () => {
       {/* 🔹 Upload Section */}
       {activeTab === "upload" && (
         <form className="space-y-6" onSubmit={handleUpload}>
-          <h3 className="text-lg font-semibold text-blue-600 mb-4">
-            Upload {bannerType === "homepage" ? "Homepage" : "Placement"} Banners
+          <h3 className="text-lg font-semibold text-cyan-700 mb-4">
+            📰 Upload {bannerType === "homepage" ? "Homepage" : "Placement"} Banners
           </h3>
 
           {/* Desktop Upload */}
@@ -219,7 +219,7 @@ const Banner = () => {
       {/* 🔹 View Section */}
       {activeTab === "view" && (
         <div>
-          <h2 className="text-2xl font-semibold text-cyan-600 mb-4">
+          <h2 className="text-2xl font-semibold text-cyan-700 mb-4">
             {bannerType === "homepage"
               ? "Homepage Banners"
               : "Placement Banners"}{" "}
@@ -233,7 +233,7 @@ const Banner = () => {
           ) : (
             <>
               <div className="mb-8">
-                <h3 className="text-lg text-cyan-500 mb-3">🖥 Desktop</h3>
+                <h3 className="text-lg text-cyan-600 mb-3">🖥 Desktop</h3>
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
                   {banners.map((b) => (
                     <div
@@ -249,7 +249,7 @@ const Banner = () => {
                         <span className="text-gray-500">{b.type}</span>
                         <button
                           onClick={() => handleDelete(b.id)}
-                          className="text-rose-400 hover:text-rose-500"
+                          className="text-rose-500 hover:text-rose-600 font-medium"
                         >
                           Delete
                         </button>
@@ -260,7 +260,7 @@ const Banner = () => {
               </div>
 
               <div>
-                <h3 className="text-lg text-cyan-500 mb-3">📱 Mobile</h3>
+                <h3 className="text-lg text-cyan-600 mb-3">📱 Mobile</h3>
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
                   {banners.map((b) => (
                     <div
@@ -276,7 +276,7 @@ const Banner = () => {
                         <span className="text-gray-500">{b.type}</span>
                         <button
                           onClick={() => handleDelete(b.id)}
-                          className="text-rose-400 hover:text-rose-500"
+                          className="text-rose-500 hover:text-rose-600 font-medium"
                         >
                           Delete
                         </button>
@@ -293,7 +293,7 @@ const Banner = () => {
       {/* 🔹 Slideshow Section */}
       {activeTab === "slideshow" && (
         <div className="space-y-10">
-          <h3 className="text-2xl font-semibold text-blue-600 mb-3">
+          <h3 className="text-2xl font-semibold text-cyan-700 mb-3">
             {bannerType === "homepage"
               ? "Homepage Banner Preview"
               : "Placement Banner Preview"}
